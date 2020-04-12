@@ -13,28 +13,26 @@ int main(void)
 	int conexion;
 	char* ip;
 	char* puerto;
+	char* mensaje;
 
 	t_log* logger;
 	t_config* config;
 
 	logger = iniciar_logger();
 
-	//Loggear "soy un log"
-
 	config = leer_config();
 
+	ip = config_get_string_value(config, "IP");
 
-	/*---------------------------------------------------PARTE 3-------------------------------------------------------------*/
+	puerto = config_get_string_value(config, "PUERTO");
 
-	//antes de continuar, tenemos que asegurarnos que el servidor esté corriendo porque lo necesitaremos para lo que sigue.
+	conexion = crear_conexion(ip,puerto);
 
-	//crear conexion
+	enviar_mensaje("soy un log desde el cliente al server",conexion);
 
-	//enviar mensaje
+	mensaje = recibir_mensaje(conexion);
 
-	//recibir mensaje
-
-	//loguear mensaje recibido
+	log_info(logger, mensaje,...);
 
 	terminar_programa(conexion, logger, config);
 }
@@ -42,17 +40,20 @@ int main(void)
 //TODO
 t_log* iniciar_logger(void)
 {
-
+	return log_create("tp0.log", "game_watch_client", true, 1);
 }
 
 //TODO
 t_config* leer_config(void)
 {
-
+	return config_create("tp0.config");
 }
 
 //TODO
 void terminar_programa(int conexion, t_log* logger, t_config* config)
 {
 	//Y por ultimo, para cerrar, hay que liberar lo que utilizamos (conexion, log y config) con las funciones de las commons y del TP mencionadas en el enunciado
+	log_destroy(logger);
+	config_destroy(config);
+	liberar_conexion(conexion);
 }
